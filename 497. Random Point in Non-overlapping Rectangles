@@ -1,0 +1,48 @@
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+
+class Solution {
+private:
+    vector<vector<int>> rects;  // 2D vector to store rectangles
+    vector<int> sum;            // Cumulative sum of areas
+    int total = 0;              // Total area of all rectangles
+
+public:
+    // Constructor to initialize rects and calculate the cumulative area
+    Solution(vector<vector<int>>& rects) {
+        this->rects = rects;
+        for (auto& rec : rects) {
+            total += (rec[2] - rec[0] + 1) * (rec[3] - rec[1] + 1);
+            sum.push_back(total);
+        }
+        srand(time(0));  // Seed the random number generator
+    }
+
+    // Function to pick a random point inside one of the rectangles
+    vector<int> pick() {
+        int target = rand() % total;  // Generate a random target
+        int lo = 0, hi = rects.size() - 1;
+
+        // Binary search to find the rectangle corresponding to the target
+        while (lo < hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (target >= sum[mid]) {
+                lo = mid + 1;
+            } else {
+                hi = mid;
+            }
+        }
+
+        // Pick a random point inside the selected rectangle
+        vector<int>& rect = rects[lo];
+        int x1 = rect[0], y1 = rect[1], x2 = rect[2], y2 = rect[3];
+        int x = rand() % (x2 - x1 + 1);
+        int y = rand() % (y2 - y1 + 1);
+
+        return {x1 + x, y1 + y};  // Return the random point
+    }
+};
+
