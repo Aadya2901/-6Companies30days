@@ -1,0 +1,24 @@
+class Solution {
+public:
+    int findTheWinner(int n, int k) {
+        int idx = 0;
+        vector<int> arr;
+        
+        // Initialize the array with people numbered from 0 to n-1
+        for (int i = 0; i < n; ++i) {
+            arr.push_back(i);
+        }
+        
+        // Keep eliminating every k-th person
+        while (arr.size() > 1) {
+            idx = (idx + k - 1) % arr.size();  // Calculate the index of the person to eliminate
+            arr.erase(arr.begin() + idx);  // Remove the person from the array
+        }
+        
+        // The last remaining person is the winner (1-based index)
+        return arr[0] + 1;
+    }
+};
+
+
+
