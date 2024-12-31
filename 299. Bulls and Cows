@@ -1,2 +1,37 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    string getHint(string secret, string guess) {
+        int bulls = 0;
+        int cows = 0;
+        
+        vector<int> secretFreq(10, 0);  // Frequency array for secret digits
+        vector<int> guessFreq(10, 0);   // Frequency array for guess digits
+
+        // First pass: Count bulls and update frequency arrays for unmatched digits
+        for (int i = 0; i < secret.length(); i++) {
+            if (secret[i] == guess[i]) {
+                bulls++;  // If characters at the same position match, it's a bull
+            } else {
+                secretFreq[secret[i] - '0']++;  // Count frequencies of unmatched digits in secret
+                guessFreq[guess[i] - '0']++;    // Count frequencies of unmatched digits in guess
+            }
+        }
+
+        // Second pass: Count cows by finding the minimum frequency of unmatched digits
+        for (int i = 0; i < 10; i++) {
+            cows += min(secretFreq[i], guessFreq[i]);  // Cows are the matching unmatched digits
+        }
+
+        // Return the result as a string in the format "xAyB"
+        return to_string(bulls) + "A" + to_string(cows) + "B";
+    }
+};
+
 
 
