@@ -1,0 +1,54 @@
+#include <vector>
+#include <string>
+#include <unordered_set>
+#include <unordered_map>
+using namespace std;
+
+class Solution {
+public:
+    vector<string> findRepeatedDnaSequences(string s) {
+        if (s.length() < 10) return {};
+
+        unordered_set<string> result;
+        unordered_map<long long, vector<int>> hashMap;
+
+        int size = 10;
+        int R = 101; // Base for hash function
+        long long mod = 1e9 + 7; // Large prime modulus to prevent overflow
+        long long patHash = 0;
+
+        // Compute initial hash value for the first window
+        for (int j = 0; j < size; j++) {
+            patHash = (R * patHash + s[j]) % mod;
+        }
+        hashMap[patHash].push_back(0);
+
+        // Pre-compute R^(size-1) % mod
+        long long RM = 1;
+        for (int i = 1; i <= size - 1; i++) {
+            RM = (R * RM) % mod;
+        }
+
+        // Sliding window to calculate hash for remaining substrings
+        for (int i = size; i < s.length(); i++) {
+            // Update hash: remove leading character and add trailing character
+            patHash = (patHash - RM * s[i - size] % mod + mod) % mod; // Ensure non-negative
+            patHash = (patHash * R + s[i]) % mod;
+
+            // Check if the hash already exists
+            if (hashMap.find(patHash) != hashMap.end()) {
+                for (int index : hashMap[patHash]) {
+                    if (s.substr(index, size) == s.substr(i - size + 1, size)) {
+                        result.insert(s.substr(i - size + 1, size));
+                    }
+                }
+            }
+
+            // Add the current index to the map
+            hashMap[patHash].push_back(i - size + 1);
+        }
+
+        // Convert set to vector for the result
+        return vector<string>(result.begin(), result.end());
+    }
+};
